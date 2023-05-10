@@ -20,3 +20,22 @@ class User(AbstractUser):
     @property
     def is_admin(self):
         return self.role == self.ADMIN or self.is_superuser
+
+
+class Subscribe(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='subscriber',
+        verbose_name='Подписчик',
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        unique=False,
+        related_name='subscribing',
+        verbose_name='Автор',
+    )
+
+    class Meta:
+        unique_together = ('user', 'author')
