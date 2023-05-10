@@ -1,11 +1,13 @@
-from rest_framework import filters, mixins, status, viewsets
-from .serializers import UserCreateSerializer, UserReadSerializer
 from django.contrib.auth import get_user_model
+from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
+from recipes.models import Tag
+from api.serializers import TagSerializer
+from .serializers import UserCreateSerializer, UserReadSerializer, \
+    SetPasswordSerializer
 
 User = get_user_model()
 class UserViewSet(mixins.CreateModelMixin,
@@ -28,3 +30,20 @@ class UserViewSet(mixins.CreateModelMixin,
         serializer = UserReadSerializer(request.user)
         return Response(serializer.data,
                         status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'],
+            permission_classes=(IsAuthenticated,))
+    def set_password(self, request):
+        serializer = SetPasswordSerializer(request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response({'detail': 'Пароль успешно изменен!'},
+                        status=status.HTTP_204_NO_CONTENT)
+
+
+class TagViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
+                 viewsets.GenericViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    pagination_class = None
+    permission_classes = (AllowAny,)

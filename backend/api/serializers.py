@@ -1,9 +1,9 @@
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
-from djoser.serializers import TokenCreateSerializer
 from users.models import Subscribe
-
+from django.contrib.auth.password_validation import validate_password
+from recipes.models import Tag
 
 User = get_user_model()
 
@@ -48,3 +48,36 @@ class UserCreateSerializer(UserCreateSerializer):
                 {'username': 'Вы не можете использовать этот username.'}
             )
         return obj
+
+
+class SetPasswordSerializer(serializers.Serializer):
+    """Смена пароля юзера."""
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Текущий пароль указан не верно")
+        return value
+
+    def validate(self, data):
+        if data['current_password'] == data['new_password']:
+            raise serializers.ValidationError(
+                "Новый пароль должен отличаться от старого")
+        return data
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = '__all__'
