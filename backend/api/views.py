@@ -32,7 +32,7 @@ from recipes.models import (
 from users.models import Subscribe
 
 from .filters import RecipeFilter
-from .permission import AdminOrReadOnlyPermission
+from .permission import AuthorOrReadOnlyPermission
 
 User = get_user_model()
 
@@ -134,7 +134,7 @@ class IngredientViewSet(
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    permission_classes = (AdminOrReadOnlyPermission,)
+    permission_classes = (AuthorOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
     filter_class = RecipeFilter
     http_method_names = ["get", "post", "patch", "create", "delete"]
