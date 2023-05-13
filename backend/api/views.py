@@ -14,6 +14,7 @@ from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                           SetPasswordSerializer, SubscribeAuthorSerializer,
                           SubscriptionsSerializer, TagSerializer,
                           UserCreateSerializer, UserReadSerializer)
+from .permission import AdminOrReadOnlyPermission
 
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -100,11 +101,9 @@ class IngredientViewSet(mixins.ListModelMixin,
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    # pagination_class = CustomPaginator
-    # pagination_class = PageNumberPagination
-    # permission_classes = (IsAuthorOrReadOnly,)
+    permission_classes = (AdminOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeFilter
+    filter_class = RecipeFilter
     http_method_names = ['get', 'post', 'patch', 'create', 'delete']
 
     def get_serializer_class(self):
