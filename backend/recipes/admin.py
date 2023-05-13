@@ -7,14 +7,14 @@ from . import models
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "measurement_unit")
     list_filter = ("name",)
-    search_fields = ("name",)
 
 
 @admin.register(models.Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ("pk", "name", "color", "slug")
     list_editable = ("name", "color", "slug")
-    empty_value_display = "-пусто-"
+    list_filter = ("pk", )
+    empty_value_display = "Пусто"
 
 
 @admin.register(models.Recipe)
@@ -23,7 +23,8 @@ class RecipeAdmin(admin.ModelAdmin):
     list_editable = ("cooking_time",)
     readonly_fields = ("in_favorites",)
     list_filter = ("name", "author", "tags")
-    empty_value_display = "-пусто-"
+    search_fields = ("name", "author")
+    empty_value_display = "Пусто"
 
     @admin.display(description="В избранном")
     def in_favorites(self, obj):
