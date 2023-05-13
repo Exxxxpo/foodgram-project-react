@@ -133,3 +133,5 @@ dmypy.json
 
 
 /infra-dev/
+
+/backend/pyproject.toml
