@@ -33,7 +33,7 @@ from users.models import Subscribe
 
 from .filters import RecipeFilter
 from .permission import AuthorOrReadOnlyPermission
-
+from rest_framework import permissions
 User = get_user_model()
 
 
@@ -48,7 +48,7 @@ class UserViewSet(
     pagination_class = LimitOffsetPagination
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
+        if self.request.method in permissions.SAFE_METHODS:
             return UserReadSerializer
         return UserCreateSerializer
 
@@ -67,7 +67,7 @@ class UserViewSet(
     )
     def set_password(self, request):
         serializer = SetPasswordSerializer(request.user, data=request.data)
-        if serializer.is_valid(raise_exception=True):
+        if serializer.is_valid():
             serializer.save()
         return Response(
             {"detail": "Пароль изменён!"}, status=status.HTTP_204_NO_CONTENT
@@ -98,7 +98,7 @@ class UserViewSet(
             serializer = SubscribeAuthorSerializer(
                 author, data=request.data, context={"request": request}
             )
-            serializer.is_valid(raise_exception=True)
+            serializer.is_valid()
             Subscribe.objects.create(user=request.user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -150,22 +150,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=kwargs["pk"])
+        recipe = get_object_or_404(Recipe, id=kwargs.get("pk"))
 
         if request.method == "POST":
             serializer = RecipeSerializer(
                 recipe, data=request.data, context={"request": request}
             )
-            serializer.is_valid(raise_exception=True)
-            if not Favorite.objects.filter(
+            serializer.is_valid()
+            if Favorite.objects.filter(
                 user=request.user, recipe=recipe
             ).exists():
-                Favorite.objects.create(user=request.user, recipe=recipe)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(
-                {"errors": "Рецепт уже в избранном."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                return Response(
+                    {"errors": "Рецепт уже в избранном."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            Favorite.objects.create(user=request.user, recipe=recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
             get_object_or_404(
@@ -183,22 +183,22 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pagination_class=None,
     )
     def shopping_cart(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=kwargs["pk"])
+        recipe = get_object_or_404(Recipe, id=kwargs.get('pk'))
 
         if request.method == "POST":
             serializer = RecipeSerializer(
                 recipe, data=request.data, context={"request": request}
             )
-            serializer.is_valid(raise_exception=True)
-            if not Shopping_cart.objects.filter(
+            serializer.is_valid()
+            if Shopping_cart.objects.filter(
                 user=request.user, recipe=recipe
             ).exists():
-                Shopping_cart.objects.create(user=request.user, recipe=recipe)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(
-                {"errors": "Рецепт уже в списке покупок."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+                return Response(
+                    {"errors": "Рецепт уже в списке покупок."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            Shopping_cart.objects.create(user=request.user, recipe=recipe)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
             get_object_or_404(
