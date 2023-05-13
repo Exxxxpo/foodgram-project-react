@@ -12,7 +12,6 @@ User = get_user_model()
 
 
 class UserReadSerializer(UserSerializer):
-    """Список пользователей."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -30,7 +29,6 @@ class UserReadSerializer(UserSerializer):
 
 
 class UserCreateSerializer(UserCreateSerializer):
-    """Создание нового пользователя."""
     class Meta:
         model = User
         fields = ('email', 'id', 'username',
@@ -53,7 +51,6 @@ class UserCreateSerializer(UserCreateSerializer):
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    """Смена пароля юзера."""
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
@@ -86,7 +83,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-    """[GET] Список ингредиентов."""
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -104,7 +100,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-    """Список ингредиентов с количеством для рецепта."""
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
