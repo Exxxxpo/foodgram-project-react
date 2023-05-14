@@ -1,6 +1,6 @@
 ![status workflow](https://github.com/Exxxxpo/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
 
-# Информация для ревьюера:
+# Информация для ревьюера: (на данный момент неактуально)
 
 Адрес сайта: 
 Данные для входа в админку:
