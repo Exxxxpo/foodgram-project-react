@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from .pagination import PaginationForRecipe
 
 from api.serializers import (
     IngredientSerializer,
@@ -136,11 +137,12 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     permission_classes = (AuthorOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
-    filter_class = RecipeFilter
+    filterset_class = RecipeFilter
     http_method_names = ["get", "post", "patch", "create", "delete"]
+    pagination_class = PaginationForRecipe
 
     def get_serializer_class(self):
-        if self.action in ("list", "retrieve"):
+        if self.request.method in permissions.SAFE_METHODS:
             return RecipeReadSerializer
         return RecipeCreateSerializer
 
@@ -236,3 +238,5 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         file["Content-Disposition"] = "attachment; filename=shopping_cart.txt"
         return file
+
+

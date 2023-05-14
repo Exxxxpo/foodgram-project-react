@@ -1,16 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.db import transaction
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
 from recipes.models import (
-    Favorite,
     Ingredient,
     Recipe,
     RecipeIngredient,
-    Shopping_cart,
     Tag,
 )
 from users.models import Subscribe
@@ -153,22 +150,22 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-    def get_is_favorited(self, obj):
-        return (
-            self.context.get("request").user.is_authenticated
-            and Favorite.objects.filter(
-                user=self.context["request"].user, recipe=obj
-            ).exists()
-        )
 
-    def get_is_in_shopping_cart(self, obj):
-        return (
-            self.context.get("request").user.is_authenticated
-            and Shopping_cart.objects.filter(
-                user=self.context["request"].user, recipe=obj
-            ).exists()
-        )
+    def get_is_favorited(self, recipe: Recipe) -> bool:
+        user = self.context.get('view').request.user
 
+        if user.is_anonymous:
+            return False
+
+        return user.favorite_user.filter(recipe=recipe).exists()
+
+    def get_is_in_shopping_cart(self, recipe: Recipe) -> bool:
+        user = self.context.get('view').request.user
+
+        if user.is_anonymous:
+            return False
+
+        return user.shopping_user.filter(recipe=recipe).exists()
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     """Используется как вложенный сериализатор для RecipeCreateSerializer."""

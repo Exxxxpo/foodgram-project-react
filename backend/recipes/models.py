@@ -23,6 +23,9 @@ class Tag(models.Model):
         verbose_name="Слаг", unique=True, blank=False, max_length=25
     )
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Ingredient(models.Model):
     name = models.CharField(
@@ -31,6 +34,9 @@ class Ingredient(models.Model):
     measurement_unit = models.TextField(
         verbose_name="Единицы измерения", blank=False, max_length=2
     )
+
+    class Meta:
+        ordering = ['-id']
 
 
 class Recipe(models.Model):
@@ -60,6 +66,9 @@ class Recipe(models.Model):
         verbose_name="Время приготовления", blank=False
     )
 
+    class Meta:
+        ordering = ['-id']
+
 
 class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(
@@ -76,6 +85,9 @@ class RecipeIngredient(models.Model):
     )
     amount = models.IntegerField(verbose_name="Количество", blank=False)
 
+    class Meta:
+        ordering = ['-id']
+
 
 class Favorite(models.Model):
     user = models.ForeignKey(
@@ -91,14 +103,11 @@ class Favorite(models.Model):
         verbose_name="Избранный рецепт",
     )
 
+
     class Meta:
         verbose_name = "Избранные рецепты"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_favorite"
-            )
-        ]
-
+        unique_together = ('user', 'recipe')
+        ordering = ['-id']
 
 class Shopping_cart(models.Model):
     user = models.ForeignKey(
@@ -116,8 +125,5 @@ class Shopping_cart(models.Model):
 
     class Meta:
         verbose_name = "Корзина"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_shopping_cart"
-            )
-        ]
+        unique_together = ("user", "recipe")
+        ordering = ['-id']
