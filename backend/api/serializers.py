@@ -41,6 +41,7 @@ class UserReadSerializer(UserSerializer):
 
 
 class UserCreateSerializer(UserCreateSerializer):
+
     class Meta:
         model = User
         fields = (
@@ -58,8 +59,8 @@ class UserCreateSerializer(UserCreateSerializer):
         }
 
     def validate_username(self, value):
-        if value.lower() == 'me':
-            raise serializers.ValidationError('username не может быть `me`!')
+        if value.lower() == "me":
+            raise serializers.ValidationError("username не может быть `me`!")
         return value
 
 
@@ -74,7 +75,7 @@ class SetPasswordSerializer(serializers.Serializer):
     def validate_old_password(self, value):
         user = self.context["request"].user
         if not user.check_password(value):
-            raise serializers.ValidationError("Текущий пароль указан не верно")
+            raise serializers.ValidationError("Текущий пароль введен неверно")
         return value
 
     def validate(self, data):
@@ -150,22 +151,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
             "cooking_time",
         )
 
-
-    def get_is_favorited(self, recipe: Recipe) -> bool:
-        user = self.context.get('view').request.user
-
+    def get_is_favorited(self, recipe: Recipe):
+        user = self.context.get("view").request.user
         if user.is_anonymous:
             return False
-
         return user.favorite_user.filter(recipe=recipe).exists()
 
-    def get_is_in_shopping_cart(self, recipe: Recipe) -> bool:
-        user = self.context.get('view').request.user
-
+    def get_is_in_shopping_cart(self, recipe: Recipe):
+        user = self.context.get("view").request.user
         if user.is_anonymous:
             return False
-
         return user.shopping_user.filter(recipe=recipe).exists()
+
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     """Используется как вложенный сериализатор для RecipeCreateSerializer."""
@@ -290,7 +287,7 @@ class SubscriptionsSerializer(serializers.ModelSerializer):
         limit = request.GET.get("recipes_limit")
         recipes = obj.recipes.all()
         if limit:
-            recipes = recipes[:int(limit)]
+            recipes = recipes[: int(limit)]
         serializer = RecipeSerializer(recipes, many=True, read_only=True)
         return serializer.data
 

@@ -41,11 +41,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "django_filters",
     "djoser",
     "api",
     "users",
     "recipes",
-    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -158,7 +158,6 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-    "PAGE_SIZE_QUERY_PARAM": "limit",
 }
 
 DJOSER = {

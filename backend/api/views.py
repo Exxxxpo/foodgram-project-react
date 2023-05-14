@@ -35,6 +35,7 @@ from users.models import Subscribe
 from .filters import RecipeFilter
 from .permission import AuthorOrReadOnlyPermission
 from rest_framework import permissions
+
 User = get_user_model()
 
 
@@ -152,7 +153,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
     )
     def favorite(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=kwargs['pk'])
+        recipe = get_object_or_404(Recipe, id=kwargs["pk"])
 
         if request.method == "POST":
             serializer = RecipeSerializer(
@@ -185,7 +186,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pagination_class=None,
     )
     def shopping_cart(self, request, **kwargs):
-        recipe = get_object_or_404(Recipe, id=kwargs.get('pk'))
+        recipe = get_object_or_404(Recipe, id=kwargs.get("pk"))
 
         if request.method == "POST":
             serializer = RecipeSerializer(
@@ -238,5 +239,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
         file["Content-Disposition"] = "attachment; filename=shopping_cart.txt"
         return file
-
-

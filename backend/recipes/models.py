@@ -24,7 +24,7 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
 
 class Ingredient(models.Model):
@@ -36,7 +36,7 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
 
 class Recipe(models.Model):
@@ -67,7 +67,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
 
 class RecipeIngredient(models.Model):
@@ -86,7 +86,7 @@ class RecipeIngredient(models.Model):
     amount = models.IntegerField(verbose_name="Количество", blank=False)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
 
 
 class Favorite(models.Model):
@@ -103,11 +103,11 @@ class Favorite(models.Model):
         verbose_name="Избранный рецепт",
     )
 
-
     class Meta:
         verbose_name = "Избранные рецепты"
-        unique_together = ('user', 'recipe')
-        ordering = ['-id']
+        unique_together = ("user", "recipe")
+        ordering = ["-id"]
+
 
 class Shopping_cart(models.Model):
     user = models.ForeignKey(
@@ -126,4 +126,4 @@ class Shopping_cart(models.Model):
     class Meta:
         verbose_name = "Корзина"
         unique_together = ("user", "recipe")
-        ordering = ['-id']
+        ordering = ["-id"]
