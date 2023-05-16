@@ -32,10 +32,10 @@ sudo docker-compose exec backend python manage.py loaddata fixtures
 ```
 Сборка образов и запуск контейнеров:
 ```
-docker-compose up - собрать все образы и запустить все контейнеры 
-docker-compose exec web python manage.py migrate - выполнить миграции
-docker-compose exec web python manage.py createsuperuser - создать суперпользователя
-docker-compose exec web python manage.py collectstatic --no-input - собрать статику
+sudo docker-compose up - собрать все образы и запустить все контейнеры 
+sudo docker-compose exec backend python manage.py migrate - выполнить миграции
+sudo docker-compose exec backend python manage.py createsuperuser - создать суперпользователя
+sudo docker-compose exec backend python manage.py collectstatic --no-input - собрать статику
 ```
 
 ## Использованные технологии:
