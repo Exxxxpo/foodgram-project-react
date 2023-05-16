@@ -4,6 +4,7 @@ volumes:
   static_value:
   media_value:
 services:
+
   db:
     image: postgres:14-alpine
     env_file:
@@ -12,11 +13,9 @@ services:
       - "5432:5432"
     volumes:
       - db_data/var/lib/postgresql/data
-  backend:
 
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+  backend:
+    image: exxxpo/foodgram:latest
     restart: always
     volumes:
       - static_value:/app/static/
