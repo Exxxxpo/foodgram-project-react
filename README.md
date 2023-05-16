@@ -24,6 +24,11 @@ pass:
 Для начала создайте файл .env, затем отредактируйте:
 ```
 cp infra/.env.template infra/.env 
+
+```
+Для загрузки фикстур в базу данных выполните:
+```
+sudo docker-compose exec backend python manage.py loaddata fixtures
 ```
 Сборка образов и запуск контейнеров:
 ```
