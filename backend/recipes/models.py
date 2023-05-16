@@ -1,38 +1,31 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator
 from django.db import models
 
-# from users.models import User
+
 User = get_user_model()
 
 
 class Tag(models.Model):
     name = models.TextField(
-        verbose_name="Название",
-        unique=True,
-        blank=False,
+        verbose_name="Название", unique=True, max_length=200
     )
     color = models.CharField(
         verbose_name="Цветовой HEX код",
         unique=True,
-        blank=False,
         max_length=7,
         validators=[RegexValidator(r"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")],
     )
-    slug = models.SlugField(
-        verbose_name="Слаг", unique=True, blank=False, max_length=25
-    )
+    slug = models.SlugField(verbose_name="Слаг", unique=True, max_length=200)
 
     class Meta:
         ordering = ["-id"]
 
 
 class Ingredient(models.Model):
-    name = models.CharField(
-        verbose_name="Ингридиент", blank=False, max_length=100
-    )
+    name = models.CharField(verbose_name="Ингридиент", max_length=200)
     measurement_unit = models.TextField(
-        verbose_name="Единицы измерения", blank=False, max_length=2
+        verbose_name="Единицы измерения", max_length=200
     )
 
     class Meta:
@@ -46,24 +39,24 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name="recipes",
     )
-    name = models.CharField(
-        verbose_name="Название", blank=False, max_length=100
-    )
+    name = models.CharField(verbose_name="Название", max_length=200)
     image = models.ImageField(
-        verbose_name="Изображение", upload_to="recipes/", blank=False
+        verbose_name="Изображение",
+        upload_to="recipes/",
     )
-    text = models.CharField(
-        verbose_name="Описание", blank=False, max_length=200
-    )
+    text = models.CharField(verbose_name="Описание", max_length=1000)
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name="Ингридиенты",
         through="RecipeIngredient",
         through_fields=("recipe", "ingredient"),
     )
-    tags = models.ManyToManyField(Tag, verbose_name="Тэги", blank=False)
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name="Тэги",
+    )
     cooking_time = models.IntegerField(
-        verbose_name="Время приготовления", blank=False
+        verbose_name="Время приготовления", validators=[MinValueValidator(1)]
     )
 
     class Meta:
@@ -83,7 +76,9 @@ class RecipeIngredient(models.Model):
         on_delete=models.CASCADE,
         related_name="ingredients",
     )
-    amount = models.IntegerField(verbose_name="Количество", blank=False)
+    amount = models.IntegerField(
+        verbose_name="Количество", validators=[MinValueValidator(1)]
+    )
 
     class Meta:
         ordering = ["-id"]

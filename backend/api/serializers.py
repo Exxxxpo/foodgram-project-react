@@ -41,7 +41,6 @@ class UserReadSerializer(UserSerializer):
 
 
 class UserCreateSerializer(UserCreateSerializer):
-
     class Meta:
         model = User
         fields = (
@@ -115,6 +114,7 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     """Используется как вложенный сериализатор для RecipeReadSerializer."""
+
     id = serializers.ReadOnlyField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
     measurement_unit = serializers.ReadOnlyField(
@@ -166,6 +166,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     """Используется как вложенный сериализатор для RecipeCreateSerializer."""
+
     id = serializers.IntegerField()
 
     class Meta:

@@ -4,11 +4,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, status, viewsets
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from .pagination import PaginationForRecipe
 
 from api.serializers import (
     IngredientSerializer,
@@ -31,10 +31,9 @@ from recipes.models import (
     Tag,
 )
 from users.models import Subscribe
-
 from .filters import RecipeFilter
+from .pagination import PaginationForRecipe
 from .permission import AuthorOrReadOnlyPermission
-from rest_framework import permissions
 
 User = get_user_model()
 
@@ -228,14 +227,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 "ingredient__measurement_unit",
             )
         )
-        file_list = []
+        response_contents = []
         [
-            file_list.append("{} - {} {}.".format(*ingredient))
+            response_contents.append("{} - {} {}.".format(*ingredient))
             for ingredient in ingredients
         ]
-        file = HttpResponse(
-            "Cписок покупок:\n" + "\n".join(file_list),
+        response = HttpResponse(
+            "Cписок покупок:\n" + "\n".join(response_contents),
             content_type="text/plain",
         )
-        file["Content-Disposition"] = "attachment; filename=shopping_cart.txt"
-        return file
+        response["Content-Disposition"] = "attachment; filename=shopping_cart.txt"
+        return response

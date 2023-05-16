@@ -14,7 +14,7 @@ class UserAdmin(admin.ModelAdmin):
         "password",
     )
     list_editable = ("password",)
-    list_filter = ("username", "email")
+    list_filter = ("is_superuser",)
     search_fields = ("username", "email")
     empty_value_display = "Пусто"
 
