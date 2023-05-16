@@ -44,7 +44,7 @@ class Recipe(models.Model):
         verbose_name="Изображение",
         upload_to="recipes/",
     )
-    text = models.CharField(verbose_name="Описание", max_length=1000)
+    text = models.CharField(verbose_name="Описание", max_length=5000)
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name="Ингридиенты",
