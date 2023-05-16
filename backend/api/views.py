@@ -3,34 +3,21 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, status, viewsets
-from rest_framework import permissions
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from api.serializers import (
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeReadSerializer,
-    RecipeSerializer,
-    SetPasswordSerializer,
-    SubscribeAuthorSerializer,
-    SubscriptionsSerializer,
-    TagSerializer,
-    UserCreateSerializer,
-    UserReadSerializer,
-)
-from recipes.models import (
-    Favorite,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Shopping_cart,
-    Tag,
-)
+from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
+                             RecipeReadSerializer, RecipeSerializer,
+                             SetPasswordSerializer, SubscribeAuthorSerializer,
+                             SubscriptionsSerializer, TagSerializer,
+                             UserCreateSerializer, UserReadSerializer)
+from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                            Shopping_cart, Tag)
 from users.models import Subscribe
+
 from .filters import RecipeFilter
 from .pagination import PaginationForRecipe
 from .permission import AuthorOrReadOnlyPermission
