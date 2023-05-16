@@ -165,5 +165,5 @@ DJOSER = {
 }
 
 FIXTURE_DIRS = [
-    'recipes/fixtures',
+    "recipes/fixtures",
 ]

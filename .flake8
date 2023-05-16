@@ -1,0 +1,3 @@
+[flake8]
+exclude = backend/recipes/migrations, backend/users/migrations, backend/foodgram/settings.py
+ignore = R503
