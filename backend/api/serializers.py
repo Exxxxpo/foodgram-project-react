@@ -16,7 +16,8 @@ User = get_user_model()
 
 
 class UserReadSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+    # is_subscribed = serializers.SerializerMethodField()
+    is_subscribed = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = User
@@ -29,15 +30,15 @@ class UserReadSerializer(UserSerializer):
             "is_subscribed",
         )
 
-    def get_is_subscribed(self, obj):
-        if (
-            self.context.get("request")
-            and not self.context["request"].user.is_anonymous
-        ):
-            return Subscribe.objects.filter(
-                user=self.context["request"].user, author=obj
-            ).exists()
-        return False
+    # def get_is_subscribed(self, obj):
+    #     if (
+    #         self.context.get("request")
+    #         and not self.context["request"].user.is_anonymous
+    #     ):
+    #         return Subscribe.objects.filter(
+    #             user=self.context["request"].user, author=obj
+    #         ).exists()
+    #     return False
 
 
 class UserCreateSerializer(UserCreateSerializer):
