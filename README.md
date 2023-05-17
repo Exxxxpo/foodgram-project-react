@@ -1,11 +1,11 @@
-![status workflow](https://github.com/Exxxxpo/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
+![status workflow](https://github.com/Exxxxpo/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
-# Информация для ревьюера: (на данный момент неактуально)
+# Информация для ревьюера:
 
-Адрес сайта: 
-Данные для входа в админку:
-login: 
-pass: 22
+Адрес сайта: http://158.160.19.246/
+Данные для входа в админку: 
+login: admin
+pass: 1
 
 # Описание проекта:
 
@@ -19,6 +19,7 @@ pass: 22
 * Создавать учётные записи
 * Работать с учётными записями пользователей (получение, изменение данных, удаление аккаунта)
 * Добавлять, редактировать, удалять, получать рецепт, тэг, ингридиенты.
+* Скачивать список ингридиентов необходимых для приготовления блюда.
 
 ## Инструкция по запуску:
 Для начала создайте файл .env, затем отредактируйте:
@@ -26,26 +27,31 @@ pass: 22
 cp infra/.env.template infra/.env 
 
 ```
+Сборка образов и запуск контейнеров:
+```
+sudo docker-compose up -d собрать все образы и запустить все контейнеры 
+sudo docker-compose exec backend python manage.py migrate выполнить миграции
+sudo docker-compose exec backend python manage.py createsuperuser создать суперпользователя
+sudo docker-compose exec backend python manage.py collectstatic --no-input собрать статику
+```
+
 Для загрузки фикстур в базу данных выполните:
 ```
 sudo docker-compose exec backend python manage.py loaddata fixtures
-```
-Сборка образов и запуск контейнеров:
-```
-sudo docker-compose up - собрать все образы и запустить все контейнеры 
-sudo docker-compose exec backend python manage.py migrate - выполнить миграции
-sudo docker-compose exec backend python manage.py createsuperuser - создать суперпользователя
-sudo docker-compose exec backend python manage.py collectstatic --no-input - собрать статику
 ```
 
 ## Использованные технологии:
 
 * Python 3.7
+* pip 22.3.1
 * Django 3.2
 * DjangoRestFramework 3.12.4
-* Gunicorn 20.0.4
+* Djoser 2.1.0
 * Docker 3.8
+* Gunicorn 20.0.4
 * Nginx 1.21
+* Pillow 8.3.1
+* Postgresql 12.14
 
 ### Автор
 
