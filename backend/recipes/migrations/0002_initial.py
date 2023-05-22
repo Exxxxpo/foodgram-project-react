@@ -66,7 +66,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="recipe",
             name="tags",
-            field=models.ManyToManyField(to="recipes.Tag", verbose_name="Тэги"),
+            field=models.ManyToManyField(
+                to="recipes.Tag", verbose_name="Тэги"
+            ),
         ),
         migrations.AddField(
             model_name="favorite",

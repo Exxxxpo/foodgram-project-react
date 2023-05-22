@@ -4,8 +4,11 @@ from django.db import models
 
 class User(AbstractUser):
     email = models.EmailField(
-        "Электронная почта", unique=True, max_length=254, blank=False
+        "Электронная почта",
+        unique=True,
+        max_length=254,
     )
+    password = models.CharField('Пароль', max_length=150)
 
     class Meta:
         ordering = ("pk",)

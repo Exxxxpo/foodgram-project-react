@@ -43,7 +43,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "name",
-                    models.CharField(max_length=200, verbose_name="Ингридиент"),
+                    models.CharField(
+                        max_length=200, verbose_name="Ингридиент"
+                    ),
                 ),
                 (
                     "measurement_unit",

@@ -1,21 +1,43 @@
+from api.serializers import (
+    IngredientSerializer,
+    RecipeCreateSerializer,
+    RecipeReadSerializer,
+    RecipeSerializer,
+    SetPasswordSerializer,
+    SubscribeAuthorSerializer,
+    SubscriptionsSerializer,
+    TagSerializer,
+    UserCreateSerializer,
+    UserReadSerializer,
+)
 from django.contrib.auth import get_user_model
-from django.db.models import Sum
+from django.db.models import (
+    BooleanField,
+    Case,
+    Count,
+    Exists,
+    OuterRef,
+    Prefetch,
+    Sum,
+    Value,
+    When,
+)
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Shopping_cart,
+    Tag,
+)
 from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
-from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
-                             RecipeReadSerializer, RecipeSerializer,
-                             SetPasswordSerializer, SubscribeAuthorSerializer,
-                             SubscriptionsSerializer, TagSerializer,
-                             UserCreateSerializer, UserReadSerializer)
-from recipes.models import (Favorite, Ingredient, Recipe, RecipeIngredient,
-                            Shopping_cart, Tag)
 from users.models import Subscribe
 
 from .filters import RecipeFilter
@@ -31,7 +53,25 @@ class UserViewSet(
     mixins.RetrieveModelMixin,
     viewsets.GenericViewSet,
 ):
-    queryset = User.objects.all()
+    def get_queryset(self):
+        queryset = User.objects.all()
+        if self.request.user.is_anonymous:
+            return queryset
+        return queryset.annotate(
+            is_subscribed=Case(
+                When(
+                    Exists(
+                        self.request.user.subscriber.filter(
+                            author=OuterRef('pk')
+                        )
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
+
     permission_classes = (AllowAny,)
     pagination_class = LimitOffsetPagination
 
@@ -67,7 +107,13 @@ class UserViewSet(
         permission_classes=(IsAuthenticated,),
     )
     def subscriptions(self, request):
-        queryset = User.objects.filter(subscribing__user=request.user)
+        queryset = User.objects.filter(
+            subscribing__user=request.user
+        ).annotate(is_subscribed=Value("True"), recipes_count=Count("recipes"))
+        subquery = Recipe.objects.all()
+        queryset = queryset.prefetch_related(
+            Prefetch("recipes", queryset=subquery, to_attr="limited_recipes")
+        )
         page = self.paginate_queryset(queryset)
         serializer = SubscriptionsSerializer(
             page, many=True, context={"request": request}
@@ -121,12 +167,63 @@ class IngredientViewSet(
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
     permission_classes = (AuthorOrReadOnlyPermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
     http_method_names = ["get", "post", "patch", "create", "delete"]
     pagination_class = PaginationForRecipe
+
+    def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return Recipe.objects.all()
+        queryset = Recipe.objects.annotate(
+            is_favorited=Case(
+                When(
+                    Exists(
+                        self.request.user.favorite_user.filter(
+                            recipe=OuterRef('pk')
+                        )
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        ).annotate(
+            is_in_shopping_cart=Case(
+                When(
+                    Exists(
+                        self.request.user.shopping_user.filter(
+                            recipe=OuterRef('pk')
+                        )
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
+
+        subquery = User.objects.annotate(
+            is_subscribed=Case(
+                When(
+                    Exists(
+                        self.request.user.subscriber.filter(
+                            author=OuterRef('pk')
+                        )
+                    ),
+                    then=Value(True),
+                ),
+                default=Value(False),
+                output_field=BooleanField(),
+            )
+        )
+        return queryset.prefetch_related(
+            Prefetch(
+                "author",
+                queryset=subquery,
+            )
+        )
 
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
