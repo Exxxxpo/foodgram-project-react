@@ -131,4 +131,3 @@ const UserPage = ({ updateOrders }) => {
 }
 
 export default UserPage
-

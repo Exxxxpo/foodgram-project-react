@@ -79,4 +79,3 @@ const Favorites = ({ updateOrders }) => {
 }
 
 export default Favorites
-
