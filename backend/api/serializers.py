@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class UserReadSerializer(UserSerializer):
-    is_subscribed = serializers.BooleanField(read_only=True)
+    is_subscribed = serializers.BooleanField(read_only=True, default=False)
 
     class Meta:
         model = User
@@ -249,7 +249,7 @@ class SubscribeAuthorSerializer(serializers.ModelSerializer):
     username = serializers.ReadOnlyField()
     is_subscribed = serializers.BooleanField(read_only=True)
     recipes = RecipeSerializer(many=True, read_only=True)
-    recipes_count = serializers.IntegerField(read_only=True, default=1)
+    recipes_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = User

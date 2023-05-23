@@ -54,7 +54,7 @@ class UserViewSet(
     viewsets.GenericViewSet,
 ):
     def get_queryset(self):
-        queryset = User.objects.all()
+        queryset = User.objects.all().prefetch_related('subscriber')
         if self.request.user.is_anonymous:
             return queryset
         return queryset.annotate(
@@ -126,9 +126,10 @@ class UserViewSet(
         permission_classes=(IsAuthenticated,),
     )
     def subscribe(self, request, **kwargs):
-        author = get_object_or_404(User, id=kwargs["pk"])
 
         if request.method == "POST":
+            queryset = User.objects.annotate(is_subscribed=Value(True))
+            author = get_object_or_404(queryset, id=kwargs["pk"])
             serializer = SubscribeAuthorSerializer(
                 author, data=request.data, context={"request": request}
             )
@@ -137,6 +138,7 @@ class UserViewSet(
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
+            author = get_object_or_404(User, id=kwargs["pk"])
             get_object_or_404(
                 Subscribe, user=request.user, author=author
             ).delete()

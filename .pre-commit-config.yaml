@@ -4,13 +4,26 @@ repos:
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
+        exclude: 'frontend/'
       - id: trailing-whitespace
         exclude: 'frontend/'
+  - repo: https://github.com/pycqa/isort
+    rev: 5.11.5
+    hooks:
+    -   id: isort
+        exclude: ^backend/api/views.py
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        language_version: python3
+        exclude: ^frontend/
+        args: [-S, -t, py37, --line-length, '79']
   - repo: https://github.com/PyCQA/flake8
     rev: 4.0.1
     hooks:
       - id: flake8
-        exclude: ^(.github/|data/|docs/|frontend/|infra/|backend/users/migrations)/
+        exclude: 'backend/users/migrations/'
         additional_dependencies:
           - pyproject-flake8
           - flake8-builtins
@@ -23,4 +36,14 @@ repos:
           - flake8-printf-formatting
           - flake8-pytest-style
           - flake8-variables-names
+        # путь до каталога с конфигом
         args: ['--config=setup.cfg']
+  - repo: local
+    hooks:
+      -   id: migrations
+          name: 'Checking migrations'
+          entry: python backend/manage.py
+          language: system
+          args: [makemigrations, --dry-run, --check]
+          pass_filenames: false
+          require_serial: true
