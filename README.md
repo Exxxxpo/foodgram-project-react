@@ -53,6 +53,13 @@ sudo docker-compose exec backend python manage.py loaddata fixtures
 * Pillow 8.3.1
 * Postgresql 12.14
 
+## Скриншоты
+![image](https://github.com/Exxxxpo/foodgram-project-react/assets/102860715/d88399cf-3155-4393-b350-468b30a72952)
+![image](https://github.com/Exxxxpo/foodgram-project-react/assets/102860715/749a86d6-2c8b-4e86-a853-5f66cf91211a)
+![image](https://github.com/Exxxxpo/foodgram-project-react/assets/102860715/405e1b70-0d67-4870-a673-74c557d0c494)
+![image](https://github.com/Exxxxpo/foodgram-project-react/assets/102860715/df9b9d94-5821-4b8e-ab07-efc3808c66fa)
+
+
 ### Автор
 
 - Деваев Лев
