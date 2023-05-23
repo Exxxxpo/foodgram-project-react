@@ -35,11 +35,6 @@ sudo docker-compose exec backend python manage.py createsuperuser создать
 sudo docker-compose exec backend python manage.py collectstatic --no-input собрать статику
 ```
 
-Для загрузки фикстур в базу данных выполните:
-```
-sudo docker-compose exec backend python manage.py loaddata fixtures
-```
-
 ## Использованные технологии:
 
 * Python 3.7
