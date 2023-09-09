@@ -1,13 +1,5 @@
 ![status workflow](https://github.com/Exxxxpo/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
 
-# Информация для ревьюера:
-
-Адрес сайта: http://158.160.19.246/
-Данные для входа в админку:
-login: admin
-pass: 1
-
-
 # Описание проекта:
 
 Проект *Foodgram* позволяет пользователям публиковать рецепты, подписываться
